@@ -71,10 +71,10 @@ wgs.head(n=5)
 
 
 ******************************************************************************************************************
-To be done after the mid-term report
+Next steps
 
 
- """ Scrape and add new postings to the existing dataframe - optional! """
+ """ Optional: Scrape and add new postings to the existing dataframe """
  
 Depending on the desired size of the dataset, an automated loop could repeat the web scraping part for new job postings. 
 This could by done once per day or once per week for a limited amount of time.
@@ -87,5 +87,4 @@ appartment of the room posted, the district and the street + house number of eac
 
 
  """ Create a new variable in the dataframe to compare room prices to the BAföG amount for living costs in Berlin """
- 
  
