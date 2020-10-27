@@ -1,0 +1,91 @@
+""" Import all relevant packages """
+
+import requests
+from requests import get
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+
+from time import sleep
+from random import randint
+
+
+""" Create lists in order to store the scraped data as variables """
+
+price = []
+size_room = []
+size_wg = []
+ad_url = []
+
+
+""" Scrape the needed information from WG-Gesucht """
+
+# Define the numbers of overview pages to loop over, each containing 20 WG offers, to avoid scraping the total of 6000 pages that include postings from over 2 years ago
+pages = np.arange(0, 62, 1) #last two weeks (13.10.2020 - 27.10.2020)
+
+# Create a loop to access the overview pages with room postings in Berlin for page in pages: 
+    page = requests.get("https://www.wg-gesucht.de/wg-zimmer-in-Berlin.8.0.1." + str(page) +".html?category=0&city_id=8&rent_type=0&img=1&rent_types%5B0%5D=0")
+
+# Make the html content easy to read with the beautifulsoup package
+    soup = BeautifulSoup(page.text, "html.parser")
+    
+# Store all room postings in here (by grabbing the part of the page where room postings are shown)
+    wg_offer_div = soup.find_all('div', class_='wgg_card offer_list_item')
+
+# Reduce the speed of crawling by switching between overview pages to avoid being blocked
+    sleep(randint(2,10))
+    # This will vary the amount of waiting time between requests for a number between 2-10 seconds
+
+# Create a loop to find the specific items we want to access in wg_offer_div
+    for i in wg_offer_div:
+    
+      # Price
+      pr = i.b.text
+      price.append(pr)   
+        
+      # Room size
+      si_room = i.find('div', class_='col-xs-3 text-right').text
+      size_room.append(si_room)
+      
+      # Appartment size (also scrapes information on district and streets, needs to be entangled later!)
+      si_wg = i.find('div', class_='col-xs-11').span.text
+      size_wg.append(si_wg)
+                  
+      # Ad URL
+      ad = i.a
+      ad_url.append(ad)
+ 
+
+ """ Store the variables in a dataframe """
+
+# Create a panda dataframe out of the lists
+wgs = pd.DataFrame({
+'ad_url': ad_url,
+'price': price,
+'size_room': size_room,
+'size_wg': size_wg,
+})
+
+# Examine the dataframe structure
+wgs.head(n=5)
+
+
+******************************************************************************************************************
+To be done after the mid-term report
+
+
+ """ Scrape and add new postings to the existing dataframe - optional! """
+ 
+Depending on the desired size of the dataset, an automated loop could repeat the web scraping part for new job postings. 
+This could by done once per day or once per week for a limited amount of time.
+
+ 
+ """ Clean the dataframe """
+ 
+The most important step here is to disentangle 'size_wg', which currently includes the number of people in the entire 
+appartment of the room posted, the district and the street + house number of each room posting. 
+
+
+ """ Create a new variable in the dataframe to compare room prices to the BAföG amount for living costs in Berlin """
+ 
+ 
