@@ -1,4 +1,4 @@
-# Muddling-through-Berlin-s-sublet-shadow-prices
+# Muddling-through-Berlins-sublet-shadow-prices
 
 ## 1. Step: Building a web scraper for the website WG-Gesucht 
 
