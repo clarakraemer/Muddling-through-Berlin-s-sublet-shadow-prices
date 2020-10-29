@@ -29,8 +29,8 @@ Trying out many of the comparator websites we realized that building such a prog
 
 ## 3. Step (to follow): Visualising room price information in a (possibly interactive) map of Berlin
 
-One of our ideal, dream rolemodels for such a map can be found here. 
-Probably using dash, we will try to visualise or existing dataframe a clear and fun way. 
+One of our ideal, dream rolemodels for such a map can be found here: https://interaktiv.morgenpost.de/so-alt-wohnt-berlin/
+Probably using dash, we will try to visualise or existing dataframe as clearly and fun as timely possible. 
 
 ### Tasks that we plan to do for this step in the coming 2 weeks: 
 - Get familiar with dash and brainstorm first ideas how we could visualise our data (everyone)
