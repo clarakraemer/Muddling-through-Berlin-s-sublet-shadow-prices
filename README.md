@@ -6,12 +6,12 @@
 As a first step for our project, we need to scrape the room price, number of roommates, district, street and house numer of room postings in Berlin. To do that, we first tried out Selenium to access each single jobposting and scrape the information from there. This was quite messy and eventually we figured out that all the information we need is actually already included in the overview pages of the room postings - without needing to click on each posting itself. We therefore switched to BeautifulSoup. Since we realised that the total number of over 6000 postings in Berlin includes many undeleted ones from earlier years, we also decided to only scrape only postings from 2020 (the first 60 pages) - and then optionally extend that by adding new postings later on. 
 
 ### Team contributions so far
-- Draft of slides and presentation of project pitch: Clara 
-- Revisions and design support of presentation slides: Golo, Gero
-- Assessment of the WG-Gesucht website, division of web scraping task into smaller, concrete steps and first attempts: Gero, Clara
-- Web scraping attempt using Selenium: Golo
-- Final web scraping code with BeautifulSoup: Gero, Golo
-- Github repository and midt-term report/readme file: Clara 
+- Draft of slides and presentation of project pitch (Clara)
+- Revisions and design support of presentation slides (Golo, Gero)
+- Assessment of the WG-Gesucht website, division of web scraping task into smaller, concrete steps and first attempts (Gero, Clara)
+- Web scraping attempt using Selenium (Golo)
+- Final web scraping code with BeautifulSoup (Gero, Golo)
+- Preparation of github repository and midt-term report/readme file (Clara) 
 
 ### Tasks that we plan to do for this step in the coming 2 weeks: 
 - Clean the existing dataframe - one variable currently contains three of the information types we need and needs to be entangled (Gero)
