@@ -15,8 +15,7 @@ As a first step for our project, we need to scrape the room price, number of roo
 
 ### Tasks that we plan to do for this step in the coming 2 weeks: 
 - Clean the existing dataframe - one variable currently contains three of the information types we need and needs to be entangled (Gero)
-- Create a loop that repeats the code and adds new postings to the dataframe in an automated way - once per day/week (Clara)
-- Adapt/improve the filter to show only "real" room postings, excluding advertisements from Airbnb and weekly room offers (Golo)
+- Create a loop that repeats the code and adds new postings to the dataframe in an automated way - once per day/week (Clara, Golo)
 
 
 ## 2. Step (to follow): Comparing the apartment/room prices to a rent price indicator 
