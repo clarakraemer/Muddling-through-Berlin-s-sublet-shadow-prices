@@ -3,7 +3,7 @@
 
 ## 1. Step (done): Building a web scraper for the website WG-Gesucht 
 
-As a first step for our project, we need to scrape the room price, number of roommates, district, street and house numer of room postings in Berlin. To do that, we first tried out Selenium to access each single jobposting and scrape the information from there. This was quite messy and eventually we figured out that all the information we need is actually already included in the overview pages of the room postings - without needing to click on each posting itself. We therefore switched to BeautifulSoup. Since we realised that the total number of over 6000 postings in Berlin includes many undeleted ones from earlier years, we also decided to only scrape only postings from 2020 (the first 60 pages) - and then optionally extend that by adding new postings later on. 
+As a first step for our project, we need to scrape the room price, number of roommates, district, street and house numer of room postings in Berlin. To do that, we first tried out Selenium to access each single jobposting and scrape the information from there. This was quite messy and eventually we figured out that all the information we need is actually already included in the overview pages of the room postings - without needing to click on each posting itself. We therefore switched to BeautifulSoup. Since we realised that the total number of over 6000 postings in Berlin includes many undeleted ones from earlier years, we also decided to only scrape the latest postings from October 2020 (the first 60 pages) - and then optionally extend that by adding new postings later on. 
 
 ### Team contributions so far
 - Draft of slides and presentation of project pitch (Clara)
