@@ -69,22 +69,3 @@ wgs = pd.DataFrame({
 # Examine the dataframe structure
 wgs.head(n=5)
 
-
-******************************************************************************************************************
-Next steps
-
-
- """ Optional: Scrape and add new postings to the existing dataframe """
- 
-Depending on the desired size of the dataset, an automated loop could repeat the web scraping part for new job postings. 
-This could by done once per day or once per week for a limited amount of time.
-
- 
- """ Clean the dataframe """
- 
-The most important step here is to disentangle 'size_wg', which currently includes the number of people in the entire 
-appartment of the room posted, the district and the street + house number of each room posting. 
-
-
- """ Create a new variable in the dataframe to compare room prices to the BAföG amount for living costs in Berlin """
- 
