@@ -21,7 +21,7 @@ ad_url = []
 """ Scrape the needed information from WG-Gesucht """
 
 # Define the numbers of overview pages to loop over, each containing 20 WG offers, to avoid scraping the total of 6000 pages that include postings from over 2 years ago
-pages = np.arange(0, 62, 1) #last two weeks (13.10.2020 - 27.10.2020)
+pages = np.arange(0, 62, 1) #last two weeks
 
 # Create a loop to access the overview pages with room postings in Berlin for page in pages: 
     page = requests.get("https://www.wg-gesucht.de/wg-zimmer-in-Berlin.8.0.1." + str(page) +".html?category=0&city_id=8&rent_type=0&img=1&rent_types%5B0%5D=0")
