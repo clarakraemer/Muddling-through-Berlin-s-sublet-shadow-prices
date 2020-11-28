@@ -36,4 +36,5 @@ df_final.drop("ad_url", axis=1)
 
 df_final.to_csv("df_final_polygon.csv", index= False)
 
+df_final.to_pickle("df_final_pickle.pkl")
 
