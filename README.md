@@ -9,15 +9,11 @@ To this end, we scrape room postings from the beginning of the Fall Semester 202
 As a first step for the project, we scraped the room price, number of roommates, district, street and house numer of room postings in Berlin. In order to avoid needing to click on each posting with the Selenium package, we only scraped the available information from the overview pages using the BeautifulSoup package. In total, we scraped >2400 room postings between October and November. 
 
 
-## 2. Step: Data cleaning (file 2.)
+## 2. Step: Data cleaning and geocoding (file 2.)
 
 
 
 
-## 3. Step: Geocoding (file 3.)
 
-
-
-
-## 4. Step: Visualisation (file 3. - MAIN FILE TO RUN)
+## 3. Step: Visualisation (file 3. - MAIN FILE TO RUN)
 
