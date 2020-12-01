@@ -1,1 +1,135 @@
+""" Prepare data for visualisation """
+
+## Load data
+wg_df = pd.read_csv('df_final_polygone.csv',
+                    sep = ";")
+    
+## Rename variables (geopandas recquires a variable "geometry")
+wg_df.rename(columns={'ad_url':'ad_url',
+                      'price':'price',
+                      'size_room':'size_room', 
+                      'size_wg': 'size_wg',
+                      'area' : 'area',
+                      'street_address' :'street_address',
+                      'full_address':'full_address',
+                      'lat_lng':'geometry'},
+                 inplace=True)
+                 
+## Drop observations with missing geocode (some addresses were too incomplete)
+wg_df2 = wg_df[wg_df.geometry != '(None, None)'] 
+
+## Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
+wg_df2[['latitude','longitude']] = wg_df['geometry'].str.split(',',expand=True)
+
+## Change format of geometry - remove comma, add POINT (geopandas needs to know whether a variable is a (multi-)polygon or a point)
+wg_df2['geometry'] = wg_df2['geometry'].str.replace(',', '')
+wg_df2['geometry'] = 'POINT ' + wg_df2['geometry'].astype(str)
+
+## Clean latitude and longitude variables
+wg_df2['latitude'] = wg_df2['latitude'].str.replace('(', '')
+wg_df2['longitude'] = wg_df2['longitude'].str.replace(')', '')
+
+## Create subset of data (without size_room and size_wg - not needed for now)
+wg_df3 = wg_df2[["price", "geometry", "latitude", "longitude"]]
+
+
+
+""" Load shapefile of Berlin """
+
+#Source: http://insideairbnb.com/berlin/
+# Aggregated in neighbourhoods (postal codes) instead of broad districts
+
+city = gpd.read_file("neighbourhoods.geojson")
+city = city.to_crs({"init": "EPSG:4326"})
+
+
+
+""" Perform spatial join of shapefile and dataframe """
+
+del wg_df3['geometry']
+
+gdf = gpd.GeoDataFrame(wg_df3, geometry=gpd.points_from_xy(x=wg_df3.longitude, y=wg_df3.latitude))
+gdf = gdf.set_crs(epsg=4326)
+gdf = gdf.to_crs({"init": "EPSG:4326"})
+
+gdf_join = gpd.sjoin(gdf, city, how="inner", op='intersects') 
+
+gdf_join1 = pd.merge(city, gdf_join, on='neighbourhood')
+
+del gdf_join1['index_right']
+del gdf_join1['neighbourhood_group_y']
+
+gdf_join1.rename(columns={'neighbourhood':'neighbourhood',
+                      'neighbourhood_group_x':'neighbourhood_group',
+                      'geometry_x':'geometry', 
+                      'price': 'price',
+                      'latitude' : 'longitude',
+                      'geometry_y' :'point'},
+                 inplace=True)
+                 
+## Drop room prices below 150 to exclude weekly rents 
+gdf_join1 = gdf_join1[gdf_join1.price >= 150]
+
+
+
+""" Plot postings on map to see data distribution """
+
+## Edit the figure size 
+plt.figure(num=None, figsize=(10,10), dpi=80, facecolor='w', edgecolor='k')
+
+## Create plot and axes
+fig = plt.plot()
+ax1 = plt.axes()
+
+## Plot geodataframe on shapefile
+city.plot(ax=ax1, alpha=0.1, edgecolor="black", facecolor="white")
+gdf_join.plot(ax=ax1, alpha = 0.1, color="red", marker='$\\bigtriangledown$',) # why does this not work??
+#ax1.figure.savefig('plot1.png', bbox_inches='tight')
+
+
+
+""" Plot heat map of room prices """
+
+fig, ax = plt.subplots()
+gdf_join1.plot(
+    ax=ax, 
+    column='price', 
+    categorical=False, 
+    legend=True, 
+    cmap='autumn_r',
+)
+
+ax.set(
+    title='Room prices in Berlin', 
+    aspect=1.3,
+    facecolor='lightblue'
+);
+
+#ax.figure.savefig('heatmap.png', bbox_inches='tight')
+
+
+
+""" Plot heat map of prices above/below BAföG housing rate """
+
+## Subtract the housing rate (325€ in Berlin) from the dataframe
+gdf_join1['diff_price_bafög'] = gdf_join1['price'] - 325
+
+## Plot
+fig, ax = plt.subplots()
+
+gdf_join1.plot(
+    ax=ax, 
+    column='diff_price_bafög', 
+    categorical=False, 
+    legend=True, 
+    cmap='inferno_r',
+)
+
+ax.set(
+    title='Diff. of prices to Bafög of Berlin room postings', 
+    aspect=1.3,
+    facecolor='lightblue'
+);
+
+#ax.figure.savefig('heatmap2.png', bbox_inches='tight')
 
