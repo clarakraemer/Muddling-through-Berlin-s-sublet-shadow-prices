@@ -1,10 +1,10 @@
-""" Cleaning data frame """
+""" Cleaning scraped data frame """
 
 
 ## Duplicate dataframe to clean it
 wgs = wgs_notcleaned
 
-## Create lists to then add to data frame
+## Create lists to then add to the dataframe
 area = []
 street_address = []
 
@@ -49,6 +49,7 @@ wgs["full_address"] = wgs["street_address"] + " " + wgs["area"] + " Berlin"
 wgs.to_csv("df_final.csv")
 
 
+
 """ Geocoding """
 
 
@@ -88,14 +89,15 @@ df_final['lat_lng'] = df_final.street_address.apply(address_to_lat_lng)
 df_final.to_csv("df_final_polygon.csv", index= False)
 
 
-""" Final data cleaning """
+
+""" Prepare data for visualisation """
 
 
 ## Load data
 wg_df = pd.read_csv('df_final_polygone.csv',
                     sep = ";")
     
-## Rename variables
+## Rename variables (geopandas recquires a variable "geometry")
 wg_df.rename(columns={'ad_url':'ad_url',
                       'price':'price',
                       'size_room':'size_room', 
@@ -106,19 +108,19 @@ wg_df.rename(columns={'ad_url':'ad_url',
                       'lat_lng':'geometry'},
                  inplace=True)
                  
-## Drop observations with missing geocode
+## Drop observations with missing geocode (some addresses were too incomplete)
 wg_df2 = wg_df[wg_df.geometry != '(None, None)'] 
 
-## Split geometry variable into lat and lng, while keeping geometry
+## Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
 wg_df2[['latitude','longitude']] = wg_df['geometry'].str.split(',',expand=True)
 
-## Change format of geometry - remove comma, add POINT
+## Change format of geometry - remove comma, add POINT (geopandas needs to know whether a variable is a (multi-)polygon or a point)
 wg_df2['geometry'] = wg_df2['geometry'].str.replace(',', '')
 wg_df2['geometry'] = 'POINT ' + wg_df2['geometry'].astype(str)
 
-## Change format of latitude and longitude
+## Clean latitude and longitude variables
 wg_df2['latitude'] = wg_df2['latitude'].str.replace('(', '')
 wg_df2['longitude'] = wg_df2['longitude'].str.replace(')', '')
 
-## Create subset of data (without size_room and size_wg)
+## Create subset of data (without size_room and size_wg - not needed for now)
 wg_df3 = wg_df2[["price", "geometry", "latitude", "longitude"]]
