@@ -96,7 +96,7 @@ gdf_join1.plot(
     column='price', 
     categorical=False, 
     legend=True, 
-    cmap='autumn_r',
+    cmap='inferno_r',
 )
 
 ax.set(
