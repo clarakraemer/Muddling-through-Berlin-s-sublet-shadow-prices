@@ -1,7 +1,7 @@
 """ Prepare data for visualisation """
 
 ## Load data
-wg_df = pd.read_csv('df_final_polygon.csv',
+wg_df = pd.read_csv('df_final_polygone.csv',
                     sep = ";")
     
 ## Rename variables (geopandas recquires a variable "geometry")
