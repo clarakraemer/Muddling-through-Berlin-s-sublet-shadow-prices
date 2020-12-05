@@ -6,14 +6,13 @@ To this end, we scrape room postings from the beginning of the Fall Semester 202
 
 ## 1. Step: Building a web scraper for the website WG-Gesucht (file 1.)
 
-As a first step for the project, we scraped the room price, number of roommates, district, street and house numer of room postings in Berlin. In order to avoid needing to click on each posting with the Selenium package, we only scraped the available information from the overview pages using the BeautifulSoup package. In total, we scraped >2400 room postings between October and November. 
+As a first step for the project, we scraped the room price, number of roommates, district, street and house numer of room postings in Berlin. In order to avoid needing to click on each posting with the Selenium package, we only scraped the available information from the overview pages using the BeautifulSoup package. In total, we scraped ~2400 room postings between October and November. 
 
 
 ## 2. Step: Data cleaning and geocoding (file 2.)
 
-
-
-
+After scraping the room posting information, we cleaned the data as much of the scraped information still had undesired html content or was not given in a standardized way. 
+Then we created an account for the Google Maps Platform to use the free credit on the generated API-key to geocode (convert addresses into earth coordinates) our data. We did this by building a function that creates the fitting url for each of our addresses to request the geo-information on this address from the API and extracts only the longitude and latitude data points. Then, we used this function on our dataset. 
 
 ## 3. Step: Visualisation (file 3. - MAIN FILE TO RUN)
 
