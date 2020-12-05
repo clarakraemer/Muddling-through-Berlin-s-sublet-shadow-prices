@@ -1,7 +1,7 @@
 """ Prepare data for visualisation """
 
 ## Load data
-wg_df = pd.read_csv('df_final_polygone.csv',
+wg_df = pd.read_csv('df_final_polygon.csv',
                     sep = ";")
     
 ## Rename variables (geopandas recquires a variable "geometry")
@@ -67,8 +67,8 @@ gdf_join1.rename(columns={'neighbourhood':'neighbourhood',
                       'geometry_y' :'point'},
                  inplace=True)
                  
-## Drop room prices below 150 to exclude weekly rents 
-gdf_join1 = gdf_join1[gdf_join1.price >= 150]
+## Drop room prices below 200 to exclude weekly rents 
+gdf_join1 = gdf_join1[gdf_join1.price >= 200]
 
 
 
@@ -136,6 +136,9 @@ ax.set(
 
 
 """ Plot affordability for students receiving government aid """
+#find min and max of diff_price_bafög for creation of categories
+gdf_join1.min()
+gdf_join1.max()
 
 # crate categories of average affordability
 cut_labels = ['Affordable with Bafög (325EUR)', 'In reach (0-50EUR above)', 'Out of reach (>51EUR above)']
