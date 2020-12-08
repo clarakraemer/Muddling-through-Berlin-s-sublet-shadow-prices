@@ -19,35 +19,37 @@ wg_df3 = wg_df2[["price", "latitude", "longitude"]]
 
 
 
-""" Load shapefile of Berlin """
+""" Load a shapefile of Berlin """
 
 # Source: http://insideairbnb.com/berlin/
 # Contains multipolygons for Berlin's neighbourhoods (postal codes) necessary for aggregation on postal code level and visualization
 
+# Save the file with geopandas so that it is recognized as a geodataframe
 city = gpd.read_file("neighbourhoods.geojson")
 
-# convert file into format used by geopandas
+# Convert the file into a format used by geopandas
 city = city.to_crs({"init": "EPSG:4326"})
 
 
 
-""" Perform spatial join of shapefile and dataframe """
+""" Perform a spatial join of the shapefile and the WG-gesucht dataframe """
 
-# create geometry variable in geopandas format (containing "point-polygon") from longitude and latitude variables in dataset
+# Create a geometry variable in geopandas format (containing "point-polygon") from longitude and latitude variables in the dataset
 gdf = gpd.GeoDataFrame(wg_df3, geometry=gpd.points_from_xy(x=wg_df3.longitude, y=wg_df3.latitude))
 gdf = gdf.set_crs(epsg=4326)
 gdf = gdf.to_crs({"init": "EPSG:4326"})
 
-# use geopandas sjoin to assign the neighbourhood to each observation in our dataframe using the multipolygons and the created geometry variable ("point-polygons") as identifier
+# Use geopandas sjoin to assign the neighbourhood to each observation in our dataframe using the multipolygons and the created geometry variable ("point-polygons") as identifier
 gdf_join = gpd.sjoin(gdf, city, how="inner", op='intersects') 
-# merge the datasets again using neighbourhood as identifier to assign the multipolygon to each observation in our dataframe
+
+# Merge the datasets again using neighbourhood as identifier to assign the multipolygon to each observation in our dataframe
 gdf_join1 = pd.merge(city, gdf_join, on='neighbourhood')
 
-# delete unnecessary variables from merge
+# Delete unnecessary variables from merge
 del gdf_join1['index_right']
 del gdf_join1['neighbourhood_group_y']
 
-# make the multipolygons the new geometry variable while renaming the old geometry variable to 'point'
+# Make the multipolygons the new geometry variable while renaming the old geometry variable to 'point', so these aren't confused by the plot function later
 gdf_join1.rename(columns={'neighbourhood_group_x':'neighbourhood_group',
                       'geometry_x':'geometry', 
                       'geometry_y' :'point'},
@@ -55,6 +57,7 @@ gdf_join1.rename(columns={'neighbourhood_group_x':'neighbourhood_group',
                  
 # Drop room prices below 200 to exclude weekly rents 
 gdf_join1 = gdf_join1[gdf_join1.price >= 200]
+
 
 
 """ Descriptive statistics """
@@ -65,25 +68,31 @@ gdf_join1.min()
 gdf_join1.max()
 
 
-""" Plot postings on map to see data distribution """
 
-# Edit the figure size 
+""" Plot postings on map to see the data distribution """
+
+# Edit the figure size first
 plt.figure(num=None, figsize=(10,10), dpi=80, facecolor='w', edgecolor='k')
 
-# Create plot and axes
+# Create plot and axes 
 fig = plt.plot()
 ax1 = plt.axes()
 
-# Plot geodataframe on shapefile
+# Plot the geodataframe of the WG-gesucht postings on the shapefile of Berlin
 city.plot(ax=ax1, alpha=0.1, edgecolor="black", facecolor="white")
-gdf_join.plot(ax=ax1, alpha = 0.1, color="red", marker='$\\bigtriangledown$',) # why does this not work??
-#ax1.figure.savefig('plot1.png', bbox_inches='tight')
+gdf_join.plot(ax=ax1, alpha = 0.1, color="red", marker='$\\bigtriangledown$',) 
+
+# Code to save the plot if needed
+#ax1.figure.savefig('plot1.png', bbox_inches='tight') # code to save the plot if needed
 
 
 
 """ Plot heat map of room prices """
 
+# Create plot and axes
 fig, ax = plt.subplots()
+
+# Specify the variable to plot, the legend and the color scheme
 gdf_join1.plot(
     ax=ax, 
     column='price', 
@@ -92,24 +101,27 @@ gdf_join1.plot(
     cmap='inferno_r',
 )
 
+# Add a title and a background color
 ax.set(
     title='Room prices in Berlin', 
     aspect=1.3,
     facecolor='lightblue'
 );
 
+# Code to save the plot if needed
 #ax.figure.savefig('heatmap.png', bbox_inches='tight')
 
 
 
-""" Plot heat map of prices above/below BAföG housing rate """
+""" Plot heat map of prices above/below the BAföG housing rate """
 
 # Subtract the housing rate (325€ in Berlin) from the dataframe
 gdf_join1['diff_price_bafög'] = gdf_join1['price'] - 325
 
-# Plot
+# Create plot and axes
 fig, ax = plt.subplots()
 
+# Specify the new variable to plot, the legend and the color scheme
 gdf_join1.plot(
     ax=ax, 
     column='diff_price_bafög', 
@@ -118,30 +130,36 @@ gdf_join1.plot(
     cmap='inferno_r',
 )
 
+# Add title and a background color
 ax.set(
     title='Diff. of prices to Bafög of Berlin room postings', 
     aspect=1.3,
     facecolor='lightblue'
 );
 
+# Code to save the plot if needed
 #ax.figure.savefig('heatmap2.png', bbox_inches='tight')
 
 
 
-""" Plot affordability for students receiving government aid """
-# find min and max of diff_price_bafög for creation of categories
+""" Plot the affordability of rooms in Berlin for students receiving government aid (BAföG)"""
+
+# Find the min and max of diff_price_bafög to create affordability categories
 gdf_join1.min()
 gdf_join1.max()
 
-# crate categories of average affordability
+# Crate categories of average affordability
 cut_labels = ['Affordable with Bafög (325EUR)', 'In reach (0-50EUR above)', 'Out of reach (>51EUR above)']
 cut_bins = [-175,0,50,830]
 gdf_join1['bins'] = pd.cut(gdf_join1['diff_price_bafög'], bins=cut_bins, labels=cut_labels)
 
+# Inspect the new dataframe
 #gdf_join1.head()
 
+# Create plot and axes
 fig, ax = plt.subplots()
 
+# Specify the new variable to plot, the legend and the color scheme
 gdf_join1.plot(
     ax=ax, 
     column='bins', 
@@ -150,11 +168,12 @@ gdf_join1.plot(
     cmap='Wistia',
 )
 
+# Add title and a background color
 ax.set(
     title='Average affordability of Berlin areas for students receiving Bafög', 
     aspect=1.3,
     facecolor='lightblue'
 );
 
-
+# Code to save the plot if needed
 # ax.figure.savefig('heatmap3.png', bbox_inches='tight')
