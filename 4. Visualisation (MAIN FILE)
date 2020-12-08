@@ -57,6 +57,13 @@ gdf_join1.rename(columns={'neighbourhood_group_x':'neighbourhood_group',
 gdf_join1 = gdf_join1[gdf_join1.price >= 200]
 
 
+""" Descriptive statistics """
+
+wg_df.mean()
+wg_df.median()
+wg_df.min()
+wg_df.max()
+
 
 """ Plot postings on map to see data distribution """
 
