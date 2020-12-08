@@ -1,20 +1,20 @@
 """ Prepare data for visualisation """
 
-## Load dataframe containing all observations and geocoded addresses
+# Load dataframe containing all observations and geocoded addresses
 wg_df = pd.read_csv('df_final_polygone.csv',
                     sep = ";")
                  
-## Drop observations with missing geocode (some addresses were too incomplete)
+# Drop observations with missing geocode (some addresses were too incomplete)
 wg_df2 = wg_df[wg_df.lat_lng != '(None, None)'] 
 
-## Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
+# Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
 wg_df2[['latitude','longitude']] = wg_df['lat_lng'].str.split(',',expand=True)
 
-## Clean latitude and longitude variables
+# Clean latitude and longitude variables
 wg_df2['latitude'] = wg_df2['latitude'].str.replace('(', '')
 wg_df2['longitude'] = wg_df2['longitude'].str.replace(')', '')
 
-## Create subset of data for visualization
+# Create subset of data for visualization
 wg_df3 = wg_df2[["price", "latitude", "longitude"]]
 
 
@@ -25,6 +25,7 @@ wg_df3 = wg_df2[["price", "latitude", "longitude"]]
 # Contains multipolygons for Berlin's neighbourhoods (postal codes) necessary for aggregation on postal code level and visualization
 
 city = gpd.read_file("neighbourhoods.geojson")
+
 # convert file into format used by geopandas
 city = city.to_crs({"init": "EPSG:4326"})
 
@@ -52,21 +53,21 @@ gdf_join1.rename(columns={'neighbourhood_group_x':'neighbourhood_group',
                       'geometry_y' :'point'},
                  inplace=True)
                  
-## Drop room prices below 200 to exclude weekly rents 
+# Drop room prices below 200 to exclude weekly rents 
 gdf_join1 = gdf_join1[gdf_join1.price >= 200]
 
 
 
 """ Plot postings on map to see data distribution """
 
-## Edit the figure size 
+# Edit the figure size 
 plt.figure(num=None, figsize=(10,10), dpi=80, facecolor='w', edgecolor='k')
 
-## Create plot and axes
+# Create plot and axes
 fig = plt.plot()
 ax1 = plt.axes()
 
-## Plot geodataframe on shapefile
+# Plot geodataframe on shapefile
 city.plot(ax=ax1, alpha=0.1, edgecolor="black", facecolor="white")
 gdf_join.plot(ax=ax1, alpha = 0.1, color="red", marker='$\\bigtriangledown$',) # why does this not work??
 #ax1.figure.savefig('plot1.png', bbox_inches='tight')
@@ -96,10 +97,10 @@ ax.set(
 
 """ Plot heat map of prices above/below BAföG housing rate """
 
-## Subtract the housing rate (325€ in Berlin) from the dataframe
+# Subtract the housing rate (325€ in Berlin) from the dataframe
 gdf_join1['diff_price_bafög'] = gdf_join1['price'] - 325
 
-## Plot
+# Plot
 fig, ax = plt.subplots()
 
 gdf_join1.plot(
@@ -121,7 +122,7 @@ ax.set(
 
 
 """ Plot affordability for students receiving government aid """
-#find min and max of diff_price_bafög for creation of categories
+# find min and max of diff_price_bafög for creation of categories
 gdf_join1.min()
 gdf_join1.max()
 
