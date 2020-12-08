@@ -13,9 +13,22 @@ As a first step for the project, we scraped the room price, number of roommates,
 
 After scraping the room posting information, we cleaned the data as much of the scraped information still had undesired html content or was not given in a standardized way. 
 
+
 ## Step 3: Geocoding 
 
 Then we created an account for the Google Maps Platform to use the free credit on the generated API-key to geocode (convert addresses into earth coordinates) our data. We did this by building a function that creates the fitting url for each of our addresses to request the geo-information on an address from the API and extracts only the longitude and latitude data points. Then, we used this function on our dataset. 
 
+
 ## Step 4: Visualisation (MAIN FILE TO RUN)
 
+In order to run the visualisation, the following steps have to be first followed:
+1) Install/load the packages in the packages file.
+2) Upload the scraped and cleaned dataframe (df_final_polygone.csv)
+3) Upload the shapefile of Berlin (neighbourhoods.geojson)
+
+We first prepare the dataframe for the visualisation, by dropping observations with missing geocode (some adresses were too incomplete for Google Maps to find), splitting the geo information into latitude in longitude and creating a subset of the data with only the room prices and the geoinformation. 
+We then load the shapefile of Berlin to obtain geoinformation on postal codes. 
+We then perform a spatial join between our geodataframe from WG-gesucht and the shapefile, in order to match which adresses are located in which postal code area.
+We also drop all observations with a price below 200€, as we noticed the data included some weekly, instead of only monthly, rents.
+
+For the visualisation, we choose four different plots. First, a basic plot of our WG-gesucht data on the shapefile, to get a better idea of the distribution of adresses in the city. Second, a heatmap of the aggregated prices in our data per postal code. Third, we create a variable of the price difference between the room prices and the BAföG housing rate for students and again plot this as a heatmap. And fourth, plot create categories of how affordable different postal codes are for students receiving BAföG government aid, and also plot this as a heatmap. 
