@@ -69,3 +69,5 @@ wgs = pd.DataFrame({
 # Examine the dataframe structure
 wgs.head(n=5)
 
+# Save dataframe
+wgs.to_csv("wgs.csv", index = False)
