@@ -1,0 +1,56 @@
+""" Cleaning scraped data frame """
+
+# Import packages
+import pandas as pd
+
+# Open dataframe
+wgs = pd.read_csv("wgs.csv",sep=',')
+
+# Duplicate dataframe before cleaning
+wgs_notcleaned = wgs
+
+# Create lists to then add to the dataframe
+area = []
+street_address = []
+
+# Cleaning data frame - loop
+for i in range(len(wgs)):
+   
+    # ad url
+    wgs.ad_url[int(i)] = re.searchwgs.ad_url[int(i)].
+   
+    # price
+    wgs.price[int(i)] = wgs.price[int(i)].replace(" ","").replace("€","")
+    
+    # room size
+    wgs.size_room[int(i)] = wgs.size_room[int(i)].replace("\n","",2).replace(" ","")\
+    .replace("m","").replace("²","")
+
+    # area
+    area_item = wgs_notcleaned.size_wg[int(i)].split("|")[1]\
+    .replace("Berlin","").replace("\n","",10).replace(" ","",200)\
+    .replace("ä","ae").replace("Ä","Ae").replace("ö","oe").replace("Ö","oe").replace("Ü","Ue")\
+    .replace("ü","ue").replace('ß',"ss")
+ 
+    area.append(area_item)
+    
+    # street address
+    street_item = wgs_notcleaned.size_wg[int(i)].split("|")[2].replace("\n","",20).replace(" ","",200)\
+    .replace("ä","ae").replace("Ä","Ae").replace("ö","oe").replace("Ö","oe").replace("Ü","Ue")\
+    .replace("ü","ue").replace('ß',"ss")
+    
+    street_address.append(street_item)
+    
+    # WG size
+    wgs.size_wg[int(i)] = re.search('[0-9]+', wgs_notcleaned.size_wg[int(i)]).group()
+
+
+# Add new columns to dataframe
+wgs.insert(4, "area", area)
+wgs.insert(5, "street_address", street_address)
+
+# Create full adress to get geolocations
+wgs["full_address"] = wgs["street_address"] + " " + wgs["area"] + " Berlin"
+
+# Save data frame
+wgs.to_csv("df_final.csv")
