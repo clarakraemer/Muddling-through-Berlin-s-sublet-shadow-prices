@@ -60,10 +60,10 @@ from urllib.parse import urlencode
 # api_key
 google_api_key = 'AIzaSyDpkgRxrCpJdAqkJYZu3qnAW-pqjqCTWNk'
 
-## Google geocoding sample request to use (Google's address):
+# Google geocoding sample request to use (Google's address)
 # https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
 
-## Create function to geocode address into coordinates using the GoogleMaps API
+# Create function to geocode address into coordinates using the GoogleMaps API
 def address_to_lat_lng(address_query, data_type = 'json'):
     url_base = f"https://maps.googleapis.com/maps/api/geocode/{data_type}" # create prototype for url for requests that adapts to address entered /take base point of url and store in url_base f-string
     param = {"address": address_query, "key": google_api_key} # define the parameters to be added behind the url_base for a standardized request
@@ -79,10 +79,10 @@ def address_to_lat_lng(address_query, data_type = 'json'):
         pass
     return latlng.get("lat"), latlng.get("lng")
 
-## Test
-#print(address_to_lat_lng("Friedrichstraße 180, 10117 Berlin")) 
+# Test
+# print(address_to_lat_lng("Friedrichstraße 180, 10117 Berlin")) 
 
-## Use function on data frame and apply geocoding function to create new variable with coordinates/polygons "lat_lng" and save again 
+# Use function on data frame and apply geocoding function to create new variable with coordinates/polygons "lat_lng" and save again 
 import pandas as pd
 
 df_final = pd.read_csv("df_final.csv",sep=',')
