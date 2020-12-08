@@ -1,5 +1,8 @@
 """ Cleaning scraped data frame """
 
+# Open dataframe
+wgs = pd.read_csv("wgs.csv",sep=',')
+
 # Duplicate dataframe before cleaning
 wgs_notcleaned = wgs
 
