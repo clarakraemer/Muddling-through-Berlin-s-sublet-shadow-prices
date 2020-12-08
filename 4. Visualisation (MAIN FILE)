@@ -1,87 +1,72 @@
 """ Prepare data for visualisation """
 
-# Load data
+## Load dataframe containing all observations and geocoded addresses
 wg_df = pd.read_csv('df_final_polygone.csv',
                     sep = ";")
-    
-# Rename variables (geopandas recquires a variable "geometry")
-wg_df.rename(columns={'ad_url':'ad_url',
-                      'price':'price',
-                      'size_room':'size_room', 
-                      'size_wg': 'size_wg',
-                      'area' : 'area',
-                      'street_address' :'street_address',
-                      'full_address':'full_address',
-                      'lat_lng':'geometry'},
-                 inplace=True)
                  
-# Drop observations with missing geocode (some addresses were too incomplete)
-wg_df2 = wg_df[wg_df.geometry != '(None, None)'] 
+## Drop observations with missing geocode (some addresses were too incomplete)
+wg_df2 = wg_df[wg_df.lat_lng != '(None, None)'] 
 
-# Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
-wg_df2[['latitude','longitude']] = wg_df['geometry'].str.split(',',expand=True)
+## Split geometry variable into lat and lng, while keeping geometry (necessary for some visualisation functions)
+wg_df2[['latitude','longitude']] = wg_df['lat_lng'].str.split(',',expand=True)
 
-# Change format of geometry - remove comma, add POINT (geopandas needs to know whether a variable is a (multi-)polygon or a point)
-wg_df2['geometry'] = wg_df2['geometry'].str.replace(',', '')
-wg_df2['geometry'] = 'POINT ' + wg_df2['geometry'].astype(str)
-
-# Clean latitude and longitude variables
+## Clean latitude and longitude variables
 wg_df2['latitude'] = wg_df2['latitude'].str.replace('(', '')
 wg_df2['longitude'] = wg_df2['longitude'].str.replace(')', '')
 
-# Create subset of data (without size_room and size_wg - not needed for now)
-wg_df3 = wg_df2[["price", "geometry", "latitude", "longitude"]]
+## Create subset of data for visualization
+wg_df3 = wg_df2[["price", "latitude", "longitude"]]
 
 
 
 """ Load shapefile of Berlin """
 
 # Source: http://insideairbnb.com/berlin/
-# Aggregated in neighbourhoods (postal codes) instead of broad districts
+# Contains multipolygons for Berlin's neighbourhoods (postal codes) necessary for aggregation on postal code level and visualization
 
 city = gpd.read_file("neighbourhoods.geojson")
+# convert file into format used by geopandas
 city = city.to_crs({"init": "EPSG:4326"})
 
 
 
 """ Perform spatial join of shapefile and dataframe """
 
-del wg_df3['geometry']
-
+# create geometry variable in geopandas format (containing "point-polygon") from longitude and latitude variables in dataset
 gdf = gpd.GeoDataFrame(wg_df3, geometry=gpd.points_from_xy(x=wg_df3.longitude, y=wg_df3.latitude))
 gdf = gdf.set_crs(epsg=4326)
 gdf = gdf.to_crs({"init": "EPSG:4326"})
 
+# use geopandas sjoin to assign the neighbourhood to each observation in our dataframe using the multipolygons and the created geometry variable ("point-polygons") as identifier
 gdf_join = gpd.sjoin(gdf, city, how="inner", op='intersects') 
-
+# merge the datasets again using neighbourhood as identifier to assign the multipolygon to each observation in our dataframe
 gdf_join1 = pd.merge(city, gdf_join, on='neighbourhood')
 
+# delete unnecessary variables from merge
 del gdf_join1['index_right']
 del gdf_join1['neighbourhood_group_y']
 
-gdf_join1.rename(columns={'neighbourhood':'neighbourhood',
-                      'neighbourhood_group_x':'neighbourhood_group',
+# make the multipolygons the new geometry variable while renaming the old geometry variable to 'point'
+gdf_join1.rename(columns={'neighbourhood_group_x':'neighbourhood_group',
                       'geometry_x':'geometry', 
-                      'price': 'price',
-                      'latitude' : 'longitude',
                       'geometry_y' :'point'},
                  inplace=True)
                  
-# Drop room prices below 200 to exclude weekly rents 
+## Drop room prices below 200 to exclude weekly rents 
 gdf_join1 = gdf_join1[gdf_join1.price >= 200]
 
 
 
 """ Plot postings on map to see data distribution """
 
-# Edit the figure size 
+## Edit the figure size 
 plt.figure(num=None, figsize=(10,10), dpi=80, facecolor='w', edgecolor='k')
 
-# Create plot and axes
+## Create plot and axes
 fig = plt.plot()
 ax1 = plt.axes()
 
-# Plot geodataframe on shapefile
+## Plot geodataframe on shapefile
 city.plot(ax=ax1, alpha=0.1, edgecolor="black", facecolor="white")
 gdf_join.plot(ax=ax1, alpha = 0.1, color="red", marker='$\\bigtriangledown$',) # why does this not work??
 #ax1.figure.savefig('plot1.png', bbox_inches='tight')
@@ -111,10 +96,10 @@ ax.set(
 
 """ Plot heat map of prices above/below BAföG housing rate """
 
-# Subtract the housing rate (325€ in Berlin) from the dataframe
+## Subtract the housing rate (325€ in Berlin) from the dataframe
 gdf_join1['diff_price_bafög'] = gdf_join1['price'] - 325
 
-# Plot
+## Plot
 fig, ax = plt.subplots()
 
 gdf_join1.plot(
@@ -136,8 +121,7 @@ ax.set(
 
 
 """ Plot affordability for students receiving government aid """
-
-# find min and max of diff_price_bafög for creation of categories
+#find min and max of diff_price_bafög for creation of categories
 gdf_join1.min()
 gdf_join1.max()
 
@@ -146,7 +130,7 @@ cut_labels = ['Affordable with Bafög (325EUR)', 'In reach (0-50EUR above)', 'Ou
 cut_bins = [-175,0,50,830]
 gdf_join1['bins'] = pd.cut(gdf_join1['diff_price_bafög'], bins=cut_bins, labels=cut_labels)
 
-# gdf_join1.head()
+#gdf_join1.head()
 
 fig, ax = plt.subplots()
 
