@@ -59,10 +59,10 @@ gdf_join1 = gdf_join1[gdf_join1.price >= 200]
 
 """ Descriptive statistics """
 
-wg_df.mean()
-wg_df.median()
-wg_df.min()
-wg_df.max()
+gdf_join1.mean()
+gdf_join1.median()
+gdf_join1.min()
+gdf_join1.max()
 
 
 """ Plot postings on map to see data distribution """
