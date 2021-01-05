@@ -3,7 +3,7 @@
 This project maps room prices in Berlin from WG-Gesucht and compares them with the BAföG housing rate: Since the fall semester 2019/2020, students in Berlin with full BAföG entitlement receive 861€ per month from the government. In addition to the 427€ for basic needs and 109€ for the statutory health insurance, students receive 325€ for housing costs. Comparing room prices on WG-Gesucht to this amount highlights how high housing costs for students have become in contrast to what the government deems reasonable, partly because flatshare rooms posted on WG-Gesucht find ways to circumvent housing price regulations from the city, such as the recently passed rent price cap. 
 To this end, we scrape room postings from the beginning of the Fall Semester 2020 (October-November) in Berlin, match their addresses with polygons and map the resulting dataframe as a Berlin heatmap in relation to how much higher/lower room prices are comapred to the BAföG housing rate.
 
-Have a look at this presentation for an intuitive overview of the project: https://drive.google.com/file/d/1jV8ITQq-ZTJ635YPi4HiHwVgjwhTVNWR/view?usp=sharing 
+Have a look at this presentation for an intuitive overview of the project: https://drive.google.com/file/d/1NsjDQEjSBXxnV9UrgtHOm0HLD5WJkuv7/view?usp=sharing
 
 ## Step 1: Building a web scraper for the website WG-Gesucht 
 
